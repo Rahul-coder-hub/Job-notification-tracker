@@ -1,154 +1,191 @@
 import './style.css'
 
-const app = document.querySelector<HTMLDivElement>('#app')
+type RouteKey = 'dashboard' | 'settings' | 'saved' | 'digest' | 'proof' | 'not-found'
 
-if (app) {
+type RouteConfig = {
+  path: string
+  title: string
+  subtext: string
+}
+
+const routes: Record<RouteKey, RouteConfig> = {
+  dashboard: {
+    path: '/dashboard',
+    title: 'Dashboard',
+    subtext: 'This section will be built in the next step.',
+  },
+  saved: {
+    path: '/saved',
+    title: 'Saved',
+    subtext: 'This section will be built in the next step.',
+  },
+  digest: {
+    path: '/digest',
+    title: 'Digest',
+    subtext: 'This section will be built in the next step.',
+  },
+  settings: {
+    path: '/settings',
+    title: 'Settings',
+    subtext: 'This section will be built in the next step.',
+  },
+  proof: {
+    path: '/proof',
+    title: 'Proof',
+    subtext: 'This section will be built in the next step.',
+  },
+  'not-found': {
+    path: '/404',
+    title: 'Page Not Found',
+    subtext: 'The page you are looking for does not exist.',
+  },
+}
+
+function matchRoute(pathname: string): RouteKey {
+  const entry = (Object.entries(routes) as [RouteKey, RouteConfig][])
+    .find(([, cfg]) => cfg.path === pathname)
+
+  if (!entry) return 'not-found'
+  return entry[0]
+}
+
+function routeToPath(route: RouteKey): string {
+  return routes[route].path
+}
+
+function renderShell(app: HTMLDivElement) {
   app.innerHTML = `
-    <div class="app-shell">
-      <header class="app-shell__top-bar">
-        <div class="top-bar__left">
-          Job Notification App
-        </div>
-        <div class="top-bar__center">
-          <span class="top-bar__progress-label">Step 1 of 4</span>
-          <div class="top-bar__progress-steps" aria-hidden="true">
-            <span class="progress-step progress-step--active"></span>
-            <span class="progress-step"></span>
-            <span class="progress-step"></span>
-            <span class="progress-step"></span>
+    <div class="page-shell">
+      <header>
+        <nav class="top-nav" aria-label="Primary">
+          <div class="top-nav__brand">Job Notification App</div>
+          <div class="top-nav__links" data-nav-links>
+            <a href="/dashboard" data-route="dashboard" class="top-nav__link">Dashboard</a>
+            <a href="/saved" data-route="saved" class="top-nav__link">Saved</a>
+            <a href="/digest" data-route="digest" class="top-nav__link">Digest</a>
+            <a href="/settings" data-route="settings" class="top-nav__link">Settings</a>
+            <a href="/proof" data-route="proof" class="top-nav__link">Proof</a>
           </div>
-        </div>
-        <div class="top-bar__right">
-          <span class="status-badge status-badge--in-progress">
-            In Progress
-          </span>
+          <button class="top-nav__menu-toggle" type="button" aria-label="Toggle navigation" data-nav-toggle>
+            <span class="top-nav__menu-toggle-icon"></span>
+          </button>
+        </nav>
+        <div class="top-nav__mobile-panel">
+          <div class="top-nav__mobile-links" data-nav-mobile-links>
+            <a href="/dashboard" data-route="dashboard" class="top-nav__mobile-link">Dashboard</a>
+            <a href="/saved" data-route="saved" class="top-nav__mobile-link">Saved</a>
+            <a href="/digest" data-route="digest" class="top-nav__mobile-link">Digest</a>
+            <a href="/settings" data-route="settings" class="top-nav__mobile-link">Settings</a>
+            <a href="/proof" data-route="proof" class="top-nav__mobile-link">Proof</a>
+          </div>
         </div>
       </header>
 
-      <section class="app-shell__context-header">
-        <h1 class="context-header__headline">
-          Define how this workspace should behave.
-        </h1>
-        <p class="context-header__subtext">
-          Use this space to design the structure and rules for your job notification flow. Keep it calm, predictable, and focused.
-        </p>
+      <section class="page-shell__header">
+        <h1 id="page-title" class="page-shell__title"></h1>
+        <p id="page-subtext" class="page-shell__subtext"></p>
       </section>
 
-      <main class="app-shell__content" aria-label="Primary workspace">
-        <section class="workspace-primary" aria-label="Primary workspace area">
-          <article class="card">
-            <h2 class="card__title">Workspace framing</h2>
-            <p class="card__body">
-              Capture the intent of this workspace without adding product features. Focus on what needs to stay consistent every time someone configures job notifications.
-            </p>
-
-            <div class="field-group">
-              <label class="field-label" for="workspace-name">
-                Workspace name
-              </label>
-              <p class="field-description">
-                A short, stable label that describes this notification workspace.
-              </p>
-              <input
-                id="workspace-name"
-                class="input"
-                type="text"
-                placeholder="e.g. Candidate notification rules"
-              />
-            </div>
-
-            <div class="field-group">
-              <label class="field-label" for="workspace-purpose">
-                Primary purpose
-              </label>
-              <p class="field-description">
-                One calm sentence that explains why this workspace exists.
-              </p>
-              <textarea
-                id="workspace-purpose"
-                class="input"
-                rows="3"
-                placeholder="Describe what this workspace should reliably handle."
-              ></textarea>
-            </div>
-
-            <div class="button-row">
-              <button class="button button-primary" type="button">
-                Save framing
-              </button>
-              <button class="button button-secondary" type="button">
-                Add later
-              </button>
-              <button class="button button-ghost" type="button">
-                Clear
-              </button>
-            </div>
-          </article>
-
-          <article class="card card--muted">
-            <h2 class="card__title">Error &amp; empty state rules</h2>
-            <p class="card__body">
-              Define how this workspace should speak when something is missing, delayed, or misconfigured. Focus on clarity, next steps, and never blaming the user.
-            </p>
-          </article>
-        </section>
-
-        <aside class="workspace-secondary" aria-label="Secondary guidance panel">
-          <section class="card">
-            <h2 class="card__title">Step notes</h2>
-            <p class="card__body">
-              Use this panel to record how you expect teams to use this step. Keep the language neutral and outcome-oriented.
-            </p>
-          </section>
-
-          <section class="card">
-            <div class="prompt-box">
-              <div>
-                <h2 class="card__title">Copyable prompt</h2>
-                <p class="card__body">
-                  This prompt is a starting point for refining how job notifications should behave. Adjust it before you reuse it elsewhere.
-                </p>
-              </div>
-              <div class="prompt-box__body">
-Define a calm, predictable workspace for job notifications.
-- No product features yet.
-- Focus on structure, copy, and error language.
-- Keep the tone confident, not excited.
-              </div>
-              <div class="prompt-box__footer">
-                <button class="button button-secondary" type="button">
-                  Copy prompt
-                </button>
-              </div>
-            </div>
-          </section>
-        </aside>
+      <main class="page-shell__body" aria-label="Page content">
+        <!-- Placeholder only; no additional content yet -->
       </main>
-
-      <footer class="app-shell__footer" aria-label="Proof checklist">
-        <div class="footer__label">Proof of completion</div>
-        <div class="footer__checklist">
-          <div class="checklist-item">
-            <span class="checklist-item__marker checklist-item__marker--pending" aria-hidden="true"></span>
-            <span>UI built</span>
-          </div>
-          <div class="checklist-item">
-            <span class="checklist-item__marker checklist-item__marker--pending" aria-hidden="true"></span>
-            <span>Logic working</span>
-          </div>
-          <div class="checklist-item">
-            <span class="checklist-item__marker checklist-item__marker--pending" aria-hidden="true"></span>
-            <span>Test passed</span>
-          </div>
-          <div class="checklist-item">
-            <span class="checklist-item__marker checklist-item__marker--pending" aria-hidden="true"></span>
-            <span>Deployed</span>
-          </div>
-        </div>
-        <p class="helper-text">
-          This checklist is intentionally static for now. It exists to remind you what “done” should eventually mean for this workspace.
-        </p>
-      </footer>
     </div>
   `
+}
+
+function applyRoute(route: RouteKey) {
+  const cfg = routes[route]
+  const titleEl = document.querySelector<HTMLElement>('#page-title')
+  const subtextEl = document.querySelector<HTMLElement>('#page-subtext')
+
+  if (titleEl) titleEl.textContent = cfg.title
+  if (subtextEl) subtextEl.textContent = cfg.subtext
+
+  const navLinks = document.querySelectorAll<HTMLElement>('[data-route]')
+
+  navLinks.forEach((link) => {
+    const linkRoute = link.getAttribute('data-route') as RouteKey | null
+    const isActive = linkRoute === route
+
+    if (link.classList.contains('top-nav__link')) {
+      link.classList.toggle('top-nav__link--active', isActive)
+    }
+
+    if (link.classList.contains('top-nav__mobile-link')) {
+      link.classList.toggle('top-nav__mobile-link--active', isActive)
+    }
+  })
+}
+
+function navigateTo(route: RouteKey) {
+  if (route === 'not-found') {
+    history.pushState({ route }, '', routes['not-found'].path)
+    applyRoute('not-found')
+    return
+  }
+
+  const current = matchRoute(window.location.pathname)
+  if (current === route) {
+    applyRoute(route)
+    return
+  }
+
+  history.pushState({ route }, '', routeToPath(route))
+  applyRoute(route)
+}
+
+function bindNavigation() {
+  const appShell = document.querySelector<HTMLElement>('.top-nav')
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]')
+  const linksContainer = document.querySelector<HTMLElement>('[data-nav-links]')
+  const mobileLinksContainer = document.querySelector<HTMLElement>('[data-nav-mobile-links]')
+
+  const handleLinkClick = (event: Event) => {
+    const target = event.currentTarget as HTMLElement | null
+    if (!target) return
+
+    const routeAttr = target.getAttribute('data-route') as RouteKey | null
+    if (!routeAttr) return
+
+    event.preventDefault()
+    navigateTo(routeAttr)
+
+    if (appShell && appShell.classList.contains('top-nav--open')) {
+      appShell.classList.remove('top-nav--open')
+    }
+  }
+
+  linksContainer?.querySelectorAll<HTMLElement>('[data-route]').forEach((link) => {
+    link.addEventListener('click', handleLinkClick)
+  })
+
+  mobileLinksContainer?.querySelectorAll<HTMLElement>('[data-route]').forEach((link) => {
+    link.addEventListener('click', handleLinkClick)
+  })
+
+  if (toggle && appShell) {
+    toggle.addEventListener('click', () => {
+      appShell.classList.toggle('top-nav--open')
+    })
+  }
+
+  window.addEventListener('popstate', (event) => {
+    const state = event.state as { route?: RouteKey } | null
+    if (state && state.route) {
+      applyRoute(state.route)
+      return
+    }
+    const route = matchRoute(window.location.pathname)
+    applyRoute(route)
+  })
+}
+
+const app = document.querySelector<HTMLDivElement>('#app')
+
+if (app) {
+  renderShell(app)
+  bindNavigation()
+
+  const initialRoute = matchRoute(window.location.pathname)
+  applyRoute(initialRoute)
 }
