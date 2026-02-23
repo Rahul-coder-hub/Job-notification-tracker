@@ -2,7 +2,7 @@
   /* Color system */
   --color-bg: #F7F6F3;
   --color-text: #111111;
-  --color-accent: #880000;
+  --color-accent: #8B0000;
   --color-success: #3D6B4F; /* muted green */
   --color-warning: #8A5A1F; /* muted amber */
 
@@ -295,8 +295,8 @@ a:hover {
 }
 
 .button-primary:hover:not(:disabled) {
-  background-color: #700000;
-  border-color: #700000;
+  background-color: #6e0000;
+  border-color: #6e0000;
 }
 
 .button-secondary {
@@ -523,6 +523,10 @@ a:hover {
 .page-shell__body {
   flex: 1;
   padding: var(--space-4);
+}
+
+.page-shell__body-inner {
+  max-width: var(--text-max-width);
 }
 
 @media (max-width: 960px) {
