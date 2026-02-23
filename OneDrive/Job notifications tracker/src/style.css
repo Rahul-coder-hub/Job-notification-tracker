@@ -619,6 +619,32 @@ a:hover {
   border-color: rgba(17, 17, 17, 0.16);
 }
 
+.badge--score {
+  margin-right: var(--space-1);
+}
+
+.badge--score-strong {
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+  color: #F7F6F3;
+}
+
+.badge--score-medium {
+  background-color: var(--color-warning);
+  border-color: var(--color-warning);
+  color: #F7F6F3;
+}
+
+.badge--score-neutral {
+  background-color: rgba(17, 17, 17, 0.12);
+  border-color: rgba(17, 17, 17, 0.18);
+}
+
+.badge--score-low {
+  background-color: transparent;
+  border-color: rgba(17, 17, 17, 0.16);
+}
+
 .meta-separator::before {
   content: "•";
   margin: 0 4px;
